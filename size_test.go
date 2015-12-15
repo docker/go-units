@@ -1,11 +1,63 @@
 package units
 
 import (
+	"fmt"
 	"reflect"
 	"runtime"
 	"strings"
 	"testing"
 )
+
+func ExampleBytesSize() {
+	fmt.Println(BytesSize(1024))
+	fmt.Println(BytesSize(1024 * 1024))
+	fmt.Println(BytesSize(1048576))
+	fmt.Println(BytesSize(2 * MiB))
+	fmt.Println(BytesSize(3.42 * GiB))
+	fmt.Println(BytesSize(5.372 * TiB))
+	fmt.Println(BytesSize(2.22 * PiB))
+}
+
+func ExampleHumanSize() {
+	fmt.Println(HumanSize(1000))
+	fmt.Println(HumanSize(1024))
+	fmt.Println(HumanSize(1000000))
+	fmt.Println(HumanSize(1048576))
+	fmt.Println(HumanSize(2 * MB))
+	fmt.Println(HumanSize(float64(3.42 * GB)))
+	fmt.Println(HumanSize(float64(5.372 * TB)))
+	fmt.Println(HumanSize(float64(2.22 * PB)))
+}
+
+func ExampleFromHumanSize() {
+	fmt.Println(FromHumanSize("32"))
+	fmt.Println(FromHumanSize("32b"))
+	fmt.Println(FromHumanSize("32B"))
+	fmt.Println(FromHumanSize("32k"))
+	fmt.Println(FromHumanSize("32K"))
+	fmt.Println(FromHumanSize("32kb"))
+	fmt.Println(FromHumanSize("32Kb"))
+	fmt.Println(FromHumanSize("32Mb"))
+	fmt.Println(FromHumanSize("32Gb"))
+	fmt.Println(FromHumanSize("32Tb"))
+	fmt.Println(FromHumanSize("32Pb"))
+}
+
+func ExampleRAMInBytes() {
+	fmt.Println(RAMInBytes("32"))
+	fmt.Println(RAMInBytes("32b"))
+	fmt.Println(RAMInBytes("32B"))
+	fmt.Println(RAMInBytes("32k"))
+	fmt.Println(RAMInBytes("32K"))
+	fmt.Println(RAMInBytes("32kb"))
+	fmt.Println(RAMInBytes("32Kb"))
+	fmt.Println(RAMInBytes("32Mb"))
+	fmt.Println(RAMInBytes("32Gb"))
+	fmt.Println(RAMInBytes("32Tb"))
+	fmt.Println(RAMInBytes("32Pb"))
+	fmt.Println(RAMInBytes("32PB"))
+	fmt.Println(RAMInBytes("32P"))
+}
 
 func TestBytesSize(t *testing.T) {
 	assertEquals(t, "1 KiB", BytesSize(1024))

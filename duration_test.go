@@ -1,9 +1,44 @@
 package units
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
+
+func ExampleHumanDuration() {
+	fmt.Println(HumanDuration(450 * time.Millisecond))
+	fmt.Println(HumanDuration(47 * time.Second))
+	fmt.Println(HumanDuration(1 * time.Minute))
+	fmt.Println(HumanDuration(3 * time.Minute))
+	fmt.Println(HumanDuration(35 * time.Minute))
+	fmt.Println(HumanDuration(35*time.Minute + 40*time.Second))
+	fmt.Println(HumanDuration(1 * time.Hour))
+	fmt.Println(HumanDuration(1*time.Hour + 45*time.Minute))
+	fmt.Println(HumanDuration(3 * time.Hour))
+	fmt.Println(HumanDuration(3*time.Hour + 59*time.Minute))
+	fmt.Println(HumanDuration(3*time.Hour + 60*time.Minute))
+	fmt.Println(HumanDuration(24 * time.Hour))
+	fmt.Println(HumanDuration(24*time.Hour + 12*time.Hour))
+	fmt.Println(HumanDuration(2 * 24 * time.Hour))
+	fmt.Println(HumanDuration(7 * 24 * time.Hour))
+	fmt.Println(HumanDuration(13*24*time.Hour + 5*time.Hour))
+	fmt.Println(HumanDuration(2 * 7 * 24 * time.Hour))
+	fmt.Println(HumanDuration(2*7*24*time.Hour + 4*24*time.Hour))
+	fmt.Println(HumanDuration(3 * 7 * 24 * time.Hour))
+	fmt.Println(HumanDuration(4 * 7 * 24 * time.Hour))
+	fmt.Println(HumanDuration(4*7*24*time.Hour + 3*24*time.Hour))
+	fmt.Println(HumanDuration(1 * 30 * 24 * time.Hour))
+	fmt.Println(HumanDuration(1*30*24*time.Hour + 2*7*24*time.Hour))
+	fmt.Println(HumanDuration(2 * 30 * 24 * time.Hour))
+	fmt.Println(HumanDuration(3*30*24*time.Hour + 1*7*24*time.Hour))
+	fmt.Println(HumanDuration(5*30*24*time.Hour + 2*7*24*time.Hour))
+	fmt.Println(HumanDuration(13 * 30 * 24 * time.Hour))
+	fmt.Println(HumanDuration(23 * 30 * 24 * time.Hour))
+	fmt.Println(HumanDuration(24 * 30 * 24 * time.Hour))
+	fmt.Println(HumanDuration(24*30*24*time.Hour + 2*7*24*time.Hour))
+	fmt.Println(HumanDuration(3*365*24*time.Hour + 2*30*24*time.Hour))
+}
 
 func TestHumanDuration(t *testing.T) {
 	// Useful duration abstractions
