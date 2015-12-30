@@ -58,6 +58,12 @@ func TestParseUlimitInvalidValueType(t *testing.T) {
 	} else if _, ok := err.(*strconv.NumError); !ok {
 		t.Fatalf("expected error on bad value type, but got `%s`", err)
 	}
+
+	if _, err := ParseUlimit("nofile=1024:asdf"); err == nil {
+		t.Fatal("expected error on bad value type, but got no error")
+	} else if _, ok := err.(*strconv.NumError); !ok {
+		t.Fatalf("expected error on bad value type, but got `%s`", err)
+	}
 }
 
 func TestUlimitStringOutput(t *testing.T) {
