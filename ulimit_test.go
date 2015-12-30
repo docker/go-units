@@ -46,13 +46,13 @@ func TestParseUlimitBadFormat(t *testing.T) {
 }
 
 func TestParseUlimitHardLessThanSoft(t *testing.T) {
-	if _, err := ParseUlimit("nofile:1024:1"); err == nil {
+	if _, err := ParseUlimit("nofile=1024:1"); err == nil {
 		t.Fatal("expected error on hard limit less than soft limit")
 	}
 }
 
 func TestParseUlimitInvalidValueType(t *testing.T) {
-	if _, err := ParseUlimit("nofile:asdf"); err == nil {
+	if _, err := ParseUlimit("nofile=asdf"); err == nil {
 		t.Fatal("expected error on bad value type")
 	}
 }
