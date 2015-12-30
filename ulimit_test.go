@@ -2,6 +2,7 @@ package units
 
 import (
 	"fmt"
+	"strconv"
 	"testing"
 )
 
@@ -53,7 +54,9 @@ func TestParseUlimitHardLessThanSoft(t *testing.T) {
 
 func TestParseUlimitInvalidValueType(t *testing.T) {
 	if _, err := ParseUlimit("nofile=asdf"); err == nil {
-		t.Fatal("expected error on bad value type")
+		t.Fatal("expected error on bad value type, but got no error")
+	} else if _, ok := err.(*strconv.NumError); !ok {
+		t.Fatalf("expected error on bad value type, but got `%s`", err)
 	}
 }
 
