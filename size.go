@@ -90,18 +90,20 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 	return int64(size), nil
 }
 
-// Returns a custom human-readable size according to given base and units
-func customBaseSize(size, base float64, units []string) string {
-	newSize, _ := calMagnitudeAndUnits(size, base, units)
+// Returns a custom human-readable size according to given base and units.
+func customBaseSize(size, base float64, _units []string) string {
+	newSize, units := calMagnitudeAndUnits(size, base, _units)
 	fmtStr := "%3.1e %s"
 	if newSize <= 9999.0 {
 		fmtStr = "%3.1f %s"
 	}
-	return CustomSize(fmtStr, size, base, units)
+	// passing newSize+1 as base and []string{units} as _map
+	// to skip the for loop in calMagnitudeAndUnits called in CustomSize.
+	return CustomSize(fmtStr, newSize, newSize+1, []string{units})
 }
 
 // Calculates and returns the size's magnitude and units
-// as given by base and units
+// as given by base and units.
 func calMagnitudeAndUnits(size, base float64, units []string) (float64, string) {
 	i := 0
 	unitsLimit := len(units) - 1
