@@ -40,25 +40,20 @@ var binaryAbbrs = []string{"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB",
 // CustomSize returns a human-readable approximation of a size
 // using custom format.
 func CustomSize(format string, size float64, base float64, _map []string) string {
-	i := 0
-	unitsLimit := len(_map) - 1
-	for size >= base && i < unitsLimit {
-		size = size / base
-		i++
-	}
-	return fmt.Sprintf(format, size, _map[i])
+	newSize, units := calMagnitudeAndUnits(size, base, _map)
+	return fmt.Sprintf(format, newSize, units)
 }
 
 // HumanSize returns a human-readable approximation of a size
 // capped at 4 valid numbers (eg. "2.746 MB", "796 KB").
 func HumanSize(size float64) string {
-	return CustomSize("%.4g %s", size, 1000.0, decimapAbbrs)
+	return customBaseSize(size, 1000.0, decimapAbbrs)
 }
 
 // BytesSize returns a human-readable size in bytes, kibibytes,
 // mebibytes, gibibytes, or tebibytes (eg. "44kiB", "17MiB").
 func BytesSize(size float64) string {
-	return CustomSize("%.4g %s", size, 1024.0, binaryAbbrs)
+	return customBaseSize(size, 1024.0, binaryAbbrs)
 }
 
 // FromHumanSize returns an integer from a human-readable specification of a
@@ -93,4 +88,26 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 	}
 
 	return int64(size), nil
+}
+
+// Returns a custom human-readable size according to given base and units
+func customBaseSize(size, base float64, units []string) string {
+	newSize, _ := calMagnitudeAndUnits(size, base, units)
+	fmtStr := "%3.1e %s"
+	if newSize <= 9999.0 {
+		fmtStr = "%3.1f %s"
+	}
+	return CustomSize(fmtStr, size, base, units)
+}
+
+// Calculates and returns the size's magnitude and units
+// as given by base and units
+func calMagnitudeAndUnits(size, base float64, units []string) (float64, string) {
+	i := 0
+	unitsLimit := len(units) - 1
+	for size >= base && i < unitsLimit {
+		size = size / base
+		i++
+	}
+	return size, units[i]
 }
