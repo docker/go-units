@@ -63,28 +63,28 @@ func BytesSize(size float64) string {
 
 // FromHumanSize returns an integer from a human-readable specification of a
 // size using SI standard (eg. "44kB", "17MB").
-func FromHumanSize(size string) (int64, error) {
+func FromHumanSize(size string) (uint64, error) {
 	return parseSize(size, decimalMap)
 }
 
 // RAMInBytes parses a human-readable string representing an amount of RAM
 // in bytes, kibibytes, mebibytes, gibibytes, or tebibytes and
-// returns the number of bytes, or -1 if the string is unparseable.
+// returns the number of bytes.
 // Units are case-insensitive, and the 'b' suffix is optional.
-func RAMInBytes(size string) (int64, error) {
+func RAMInBytes(size string) (uint64, error) {
 	return parseSize(size, binaryMap)
 }
 
 // Parses the human-readable size string into the amount it represents.
-func parseSize(sizeStr string, uMap unitMap) (int64, error) {
+func parseSize(sizeStr string, uMap unitMap) (uint64, error) {
 	matches := sizeRegex.FindStringSubmatch(sizeStr)
 	if len(matches) != 4 {
-		return -1, fmt.Errorf("invalid size: '%s'", sizeStr)
+		return 0, fmt.Errorf("invalid size: '%s'", sizeStr)
 	}
 
 	size, err := strconv.ParseFloat(matches[1], 64)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	unitPrefix := strings.ToLower(matches[3])
@@ -92,5 +92,5 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 		size *= float64(mul)
 	}
 
-	return int64(size), nil
+	return uint64(size), nil
 }
