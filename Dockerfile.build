@@ -1,0 +1,4 @@
+
+FROM    golang:1.5
+WORKDIR /go/src/github.com/docker/go-units
+ENV     GO15VENDOREXPERIMENT=1
