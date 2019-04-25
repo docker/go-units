@@ -127,7 +127,7 @@ func TestRAMInBytes(t *testing.T) {
 
 	assertSuccessEquals(t, 32, RAMInBytes, "32.3")
 	tmp := 32.3 * MiB
-	assertSuccessEquals(t, int64(tmp), RAMInBytes, "32.3 mb")
+	assertSuccessEquals(t, uint64(tmp), RAMInBytes, "32.3 mb")
 
 	assertError(t, RAMInBytes, "")
 	assertError(t, RAMInBytes, "hello")
@@ -144,7 +144,7 @@ func assertEquals(t *testing.T, expected, actual interface{}) {
 }
 
 // func that maps to the parse function signatures as testing abstraction
-type parseFn func(string) (int64, error)
+type parseFn func(string) (uint64, error)
 
 // Define 'String()' for pretty-print
 func (fn parseFn) String() string {
@@ -152,7 +152,7 @@ func (fn parseFn) String() string {
 	return fnName[strings.LastIndex(fnName, ".")+1:]
 }
 
-func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
+func assertSuccessEquals(t *testing.T, expected uint64, fn parseFn, arg string) {
 	res, err := fn(arg)
 	if err != nil || res != expected {
 		t.Errorf("%s(\"%s\") -> expected '%d' but got '%d' with error '%v'", fn, arg, expected, res, err)
@@ -161,7 +161,7 @@ func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
 
 func assertError(t *testing.T, fn parseFn, arg string) {
 	res, err := fn(arg)
-	if err == nil && res != -1 {
+	if err == nil && res != 0 {
 		t.Errorf("%s(\"%s\") -> expected error but got '%d'", fn, arg, res)
 	}
 }
