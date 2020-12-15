@@ -138,6 +138,35 @@ func TestRAMInBytes(t *testing.T) {
 	assertError(t, RAMInBytes, "32bm")
 }
 
+func TestFromSize(t *testing.T) {
+	assertSuccessEquals(t, 32, FromSize, "32")
+	assertSuccessEquals(t, 32, FromSize, "32b")
+	assertSuccessEquals(t, 32, FromSize, "32B")
+	assertSuccessEquals(t, 32*KB, FromSize, "32k")
+	assertSuccessEquals(t, 32*KB, FromSize, "32K")
+	assertSuccessEquals(t, 32*KB, FromSize, "32kb")
+	assertSuccessEquals(t, 32*KB, FromSize, "32Kb")
+	assertSuccessEquals(t, 32*KiB, FromSize, "32Kib")
+	assertSuccessEquals(t, 32*KiB, FromSize, "32KIB")
+	assertSuccessEquals(t, 32*MB, FromSize, "32Mb")
+	assertSuccessEquals(t, 32*GB, FromSize, "32Gb")
+	assertSuccessEquals(t, 32*TB, FromSize, "32Tb")
+	assertSuccessEquals(t, 32*PB, FromSize, "32Pb")
+	assertSuccessEquals(t, 32*PB, FromSize, "32PB")
+	assertSuccessEquals(t, 32*PB, FromSize, "32P")
+
+	assertSuccessEquals(t, 32, FromSize, "32.3")
+	tmp := 32.3 * MiB
+	assertSuccessEquals(t, int64(tmp), FromSize, "32.3 MiB")
+
+	assertError(t, FromSize, "")
+	assertError(t, FromSize, "hello")
+	assertError(t, FromSize, "-32")
+	assertError(t, FromSize, " 32 ")
+	assertError(t, FromSize, "32m b")
+	assertError(t, FromSize, "32bm")
+}
+
 func assertEquals(t *testing.T, expected, actual interface{}) {
 	if expected != actual {
 		t.Errorf("Expected '%v' but got '%v'", expected, actual)
