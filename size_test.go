@@ -103,6 +103,7 @@ func TestFromHumanSize(t *testing.T) {
 	assertError(t, FromHumanSize, "hello")
 	assertError(t, FromHumanSize, "-32")
 	assertError(t, FromHumanSize, ".3kB")
+	assertError(t, FromHumanSize, "32.3.3kB")
 	assertError(t, FromHumanSize, " 32 ")
 	assertError(t, FromHumanSize, "32m b")
 	assertError(t, FromHumanSize, "32bm")
