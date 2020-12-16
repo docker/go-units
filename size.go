@@ -31,7 +31,7 @@ type unitMap map[string]int64
 var (
 	decimalMap = unitMap{"k": KB, "m": MB, "g": GB, "t": TB, "p": PB}
 	binaryMap  = unitMap{"k": KiB, "m": MiB, "g": GiB, "t": TiB, "p": PiB}
-	sizeRegex  = regexp.MustCompile(`^(\d+(\.\d+)*) ?([kKmMgGtTpP])?[iI]?[bB]?$`)
+	sizeRegex  = regexp.MustCompile(`^(\d+(\.\d+)?) ?([kKmMgGtTpP])?([iI])?[bB]?$`)
 )
 
 var decimapAbbrs = []string{"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"}
@@ -76,7 +76,7 @@ func BytesSize(size float64) string {
 // FromHumanSize returns an integer from a human-readable specification of a
 // size using SI standard (eg. "44kB", "17MB").
 func FromHumanSize(size string) (int64, error) {
-	return parseSize(size, decimalMap)
+	return parseSize(size, ForceDecimal)
 }
 
 // RAMInBytes parses a human-readable string representing an amount of RAM
@@ -84,22 +84,53 @@ func FromHumanSize(size string) (int64, error) {
 // returns the number of bytes, or -1 if the string is unparseable.
 // Units are case-insensitive, and the 'b' suffix is optional.
 func RAMInBytes(size string) (int64, error) {
-	return parseSize(size, binaryMap)
+	return parseSize(size, ForceBinary)
 }
 
+// FromSize returns an integer from a specification of a
+// size using either SI standard (eg. "44kB", "17MB") or
+// binary standard (eg. "37kiB", "97MiB")
+func FromSize(size string) (int64, error) {
+	return parseSize(size, Auto)
+}
+
+type parsingMode int
+
+const (
+	Auto parsingMode = iota
+	ForceBinary
+	ForceDecimal
+)
+
 // Parses the human-readable size string into the amount it represents.
-func parseSize(sizeStr string, uMap unitMap) (int64, error) {
+func parseSize(sizeStr string, mode parsingMode) (int64, error) {
 	matches := sizeRegex.FindStringSubmatch(sizeStr)
-	if len(matches) != 4 {
+	if len(matches) != 5 {
 		return -1, fmt.Errorf("invalid size: '%s'", sizeStr)
 	}
-
 	size, err := strconv.ParseFloat(matches[1], 64)
 	if err != nil {
 		return -1, err
 	}
 
 	unitPrefix := strings.ToLower(matches[3])
+
+	var uMap unitMap
+	switch mode {
+	case ForceBinary:
+		uMap = binaryMap
+	case ForceDecimal:
+		uMap = decimalMap
+	case Auto:
+		fallthrough
+	default:
+		if matches[4] != "" {
+			uMap = binaryMap
+		} else {
+			uMap = decimalMap
+		}
+	}
+
 	if mul, ok := uMap[unitPrefix]; ok {
 		size *= float64(mul)
 	}
