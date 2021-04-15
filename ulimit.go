@@ -62,6 +62,13 @@ var ulimitNameMapping = map[string]int{
 	"stack":      rlimitStack,
 }
 
+func parseUlimitValue(s string) (int64, error) {
+	if s == "infinity" {
+		return -1, nil
+	}
+	return strconv.ParseInt(s, 10, 64)
+}
+
 // ParseUlimit parses and returns a Ulimit from the specified string.
 func ParseUlimit(val string) (*Ulimit, error) {
 	parts := strings.SplitN(val, "=", 2)
@@ -81,14 +88,14 @@ func ParseUlimit(val string) (*Ulimit, error) {
 	)
 	switch limitVals := strings.Split(parts[1], ":"); len(limitVals) {
 	case 2:
-		temp, err = strconv.ParseInt(limitVals[1], 10, 64)
+		temp, err = parseUlimitValue(limitVals[1])
 		if err != nil {
 			return nil, err
 		}
 		hard = &temp
 		fallthrough
 	case 1:
-		soft, err = strconv.ParseInt(limitVals[0], 10, 64)
+		soft, err = parseUlimitValue(limitVals[0])
 		if err != nil {
 			return nil, err
 		}
