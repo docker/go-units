@@ -153,6 +153,7 @@ func BenchmarkParseSize(b *testing.B) {
 }
 
 func assertEquals(t *testing.T, expected, actual interface{}) {
+	t.Helper()
 	if expected != actual {
 		t.Errorf("Expected '%v' but got '%v'", expected, actual)
 	}
@@ -168,6 +169,7 @@ func (fn parseFn) String() string {
 }
 
 func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
+	t.Helper()
 	res, err := fn(arg)
 	if err != nil || res != expected {
 		t.Errorf("%s(\"%s\") -> expected '%d' but got '%d' with error '%v'", fn, arg, expected, res, err)
@@ -175,6 +177,7 @@ func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
 }
 
 func assertError(t *testing.T, fn parseFn, arg string) {
+	t.Helper()
 	res, err := fn(arg)
 	if err == nil && res != -1 {
 		t.Errorf("%s(\"%s\") -> expected error but got '%d'", fn, arg, res)
