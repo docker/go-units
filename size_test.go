@@ -98,6 +98,7 @@ func TestFromHumanSize(t *testing.T) {
 	assertSuccessEquals(t, 32.5*KB, FromHumanSize, "32.5kB")
 	assertSuccessEquals(t, 32.5*KB, FromHumanSize, "32.5 kB")
 	assertSuccessEquals(t, 32, FromHumanSize, "32.5 B")
+	assertSuccessEquals(t, 300, FromHumanSize, "0.3 K")
 
 	assertError(t, FromHumanSize, "")
 	assertError(t, FromHumanSize, "hello")
@@ -128,6 +129,8 @@ func TestRAMInBytes(t *testing.T) {
 	assertSuccessEquals(t, 32, RAMInBytes, "32.3")
 	tmp := 32.3 * MiB
 	assertSuccessEquals(t, int64(tmp), RAMInBytes, "32.3 mb")
+	tmp = 0.3 * MiB
+	assertSuccessEquals(t, int64(tmp), RAMInBytes, "0.3MB")
 
 	assertError(t, RAMInBytes, "")
 	assertError(t, RAMInBytes, "hello")
