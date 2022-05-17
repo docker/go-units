@@ -83,6 +83,10 @@ func TestHumanSize(t *testing.T) {
 }
 
 func TestFromHumanSize(t *testing.T) {
+	assertSuccessEquals(t, 0, FromHumanSize, "0")
+	assertSuccessEquals(t, 0, FromHumanSize, "0b")
+	assertSuccessEquals(t, 0, FromHumanSize, "0B")
+	assertSuccessEquals(t, 0, FromHumanSize, "0 B")
 	assertSuccessEquals(t, 32, FromHumanSize, "32")
 	assertSuccessEquals(t, 32, FromHumanSize, "32b")
 	assertSuccessEquals(t, 32, FromHumanSize, "32B")
@@ -98,11 +102,59 @@ func TestFromHumanSize(t *testing.T) {
 	assertSuccessEquals(t, 32.5*KB, FromHumanSize, "32.5kB")
 	assertSuccessEquals(t, 32.5*KB, FromHumanSize, "32.5 kB")
 	assertSuccessEquals(t, 32, FromHumanSize, "32.5 B")
+	assertSuccessEquals(t, 300, FromHumanSize, "0.3 K")
+	assertSuccessEquals(t, 300, FromHumanSize, ".3kB")
+
+	assertSuccessEquals(t, 0, FromHumanSize, "0.")
+	assertSuccessEquals(t, 0, FromHumanSize, "0. ")
+	assertSuccessEquals(t, 0, FromHumanSize, "0.b")
+	assertSuccessEquals(t, 0, FromHumanSize, "0.B")
+	assertSuccessEquals(t, 0, FromHumanSize, "-0")
+	assertSuccessEquals(t, 0, FromHumanSize, "-0b")
+	assertSuccessEquals(t, 0, FromHumanSize, "-0B")
+	assertSuccessEquals(t, 0, FromHumanSize, "-0 b")
+	assertSuccessEquals(t, 0, FromHumanSize, "-0 B")
+	assertSuccessEquals(t, 32, FromHumanSize, "32.")
+	assertSuccessEquals(t, 32, FromHumanSize, "32.b")
+	assertSuccessEquals(t, 32, FromHumanSize, "32.B")
+	assertSuccessEquals(t, 32, FromHumanSize, "32. b")
+	assertSuccessEquals(t, 32, FromHumanSize, "32. B")
+
+	// We do not tolerate extra leading or trailing spaces
+	// (except for a space after the number and a missing suffix).
+	assertSuccessEquals(t, 0, FromHumanSize, "0 ")
+
+	assertError(t, FromHumanSize, " 0")
+	assertError(t, FromHumanSize, " 0b")
+	assertError(t, FromHumanSize, " 0B")
+	assertError(t, FromHumanSize, " 0 B")
+	assertError(t, FromHumanSize, "0b ")
+	assertError(t, FromHumanSize, "0B ")
+	assertError(t, FromHumanSize, "0 B ")
 
 	assertError(t, FromHumanSize, "")
 	assertError(t, FromHumanSize, "hello")
+	assertError(t, FromHumanSize, ".")
+	assertError(t, FromHumanSize, ". ")
+	assertError(t, FromHumanSize, " ")
+	assertError(t, FromHumanSize, "  ")
+	assertError(t, FromHumanSize, " .")
+	assertError(t, FromHumanSize, " . ")
 	assertError(t, FromHumanSize, "-32")
-	assertError(t, FromHumanSize, ".3kB")
+	assertError(t, FromHumanSize, "-32b")
+	assertError(t, FromHumanSize, "-32B")
+	assertError(t, FromHumanSize, "-32 b")
+	assertError(t, FromHumanSize, "-32 B")
+	assertError(t, FromHumanSize, "32b.")
+	assertError(t, FromHumanSize, "32B.")
+	assertError(t, FromHumanSize, "32 b.")
+	assertError(t, FromHumanSize, "32 B.")
+	assertError(t, FromHumanSize, "32 bb")
+	assertError(t, FromHumanSize, "32 BB")
+	assertError(t, FromHumanSize, "32 b b")
+	assertError(t, FromHumanSize, "32 B B")
+	assertError(t, FromHumanSize, "32  b")
+	assertError(t, FromHumanSize, "32  B")
 	assertError(t, FromHumanSize, " 32 ")
 	assertError(t, FromHumanSize, "32m b")
 	assertError(t, FromHumanSize, "32bm")
@@ -128,6 +180,8 @@ func TestRAMInBytes(t *testing.T) {
 	assertSuccessEquals(t, 32, RAMInBytes, "32.3")
 	tmp := 32.3 * MiB
 	assertSuccessEquals(t, int64(tmp), RAMInBytes, "32.3 mb")
+	tmp = 0.3 * MiB
+	assertSuccessEquals(t, int64(tmp), RAMInBytes, "0.3MB")
 
 	assertError(t, RAMInBytes, "")
 	assertError(t, RAMInBytes, "hello")
@@ -137,7 +191,20 @@ func TestRAMInBytes(t *testing.T) {
 	assertError(t, RAMInBytes, "32bm")
 }
 
+func BenchmarkParseSize(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, s := range []string{
+			"", "32", "32b", "32 B", "32k", "32.5 K", "32kb", "32 Kb",
+			"32.8Mb", "32.9Gb", "32.777Tb", "32Pb", "0.3Mb", "-1",
+		} {
+			FromHumanSize(s)
+			RAMInBytes(s)
+		}
+	}
+}
+
 func assertEquals(t *testing.T, expected, actual interface{}) {
+	t.Helper()
 	if expected != actual {
 		t.Errorf("Expected '%v' but got '%v'", expected, actual)
 	}
@@ -153,6 +220,7 @@ func (fn parseFn) String() string {
 }
 
 func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
+	t.Helper()
 	res, err := fn(arg)
 	if err != nil || res != expected {
 		t.Errorf("%s(\"%s\") -> expected '%d' but got '%d' with error '%v'", fn, arg, expected, res, err)
@@ -160,6 +228,7 @@ func assertSuccessEquals(t *testing.T, expected int64, fn parseFn, arg string) {
 }
 
 func assertError(t *testing.T, fn parseFn, arg string) {
+	t.Helper()
 	res, err := fn(arg)
 	if err == nil && res != -1 {
 		t.Errorf("%s(\"%s\") -> expected error but got '%d'", fn, arg, res)
