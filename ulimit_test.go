@@ -56,6 +56,13 @@ func TestParseUlimitHardLessThanSoft(t *testing.T) {
 	}
 }
 
+func TestParseUlimitInfinity(t *testing.T) {
+	u1 := &Ulimit{"memlock", -1, -1}
+	if u2, _ := ParseUlimit("memlock=infinity:infinity"); *u1 != *u2 {
+		t.Fatalf("expected %q, but got %q", u1, u2)
+	}
+}
+
 func TestParseUlimitUnlimited(t *testing.T) {
 	tt := []struct {
 		in       string
