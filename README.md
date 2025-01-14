@@ -1,4 +1,4 @@
-[![GoDoc](https://godoc.org/github.com/docker/go-units?status.svg)](https://godoc.org/github.com/docker/go-units)
+[![Go Reference](https://pkg.go.dev/badge/github.com/docker/go-units.svg)](https://pkg.go.dev/github.com/docker/go-units)
 
 # Introduction
 
@@ -6,7 +6,7 @@ go-units is a library to transform human friendly measurements into machine frie
 
 ## Usage
 
-See the [docs in godoc](https://godoc.org/github.com/docker/go-units) for examples and documentation.
+See the [docs](https://pkg.go.dev/github.com/docker/go-units) for examples and documentation.
 
 ## Copyright and license
 
