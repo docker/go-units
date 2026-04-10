@@ -244,8 +244,14 @@ func BenchmarkParseSize(b *testing.B) {
 			"", "32", "32b", "32 B", "32k", "32.5 K", "32kb", "32 Kb",
 			"32.8Mb", "32.9Gb", "32.777Tb", "32Pb", "0.3Mb", "-1",
 		} {
-			FromHumanSize(s)
-			RAMInBytes(s)
+			_, err := FromHumanSize(s)
+			if err != nil {
+				b.Fatal(err)
+			}
+			_, err = RAMInBytes(s)
+			if err != nil {
+				b.Fatal(err)
+			}
 		}
 	}
 }
