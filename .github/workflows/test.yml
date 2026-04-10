@@ -1,0 +1,51 @@
+name: test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.os }} / ${{ matrix.go-version || 'minimum' }}
+    strategy:
+      matrix:
+        go-version:
+          - "" # empty: use go.mod; see https://github.com/actions/setup-go/issues/450#issuecomment-3620402646
+          - oldstable
+          - stable
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          cache: false
+          go-version: ${{ matrix.go-version }}
+          go-version-file: ./go.mod # used when go-version is not specified.
+
+      - name: lint
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
+        with:
+          version: v2.11
+          args: --timeout=10m --verbose
+
+      - name: Test
+        run: go test -v -cover "-coverprofile=coverage.txt" -covermode=atomic ./...
+        shell: bash
+        env:
+          MSYS_NO_PATHCONV: '1'
+
+      - name: Codecov
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
+        with:
+          directory: ./
