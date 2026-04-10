@@ -16,6 +16,15 @@ func ExampleBytesSize() {
 	fmt.Println(BytesSize(3.42 * GiB))
 	fmt.Println(BytesSize(5.372 * TiB))
 	fmt.Println(BytesSize(2.22 * PiB))
+
+	// Output:
+	// 1KiB
+	// 1MiB
+	// 1MiB
+	// 2MiB
+	// 3.42GiB
+	// 5.372TiB
+	// 2.22PiB
 }
 
 func ExampleHumanSize() {
@@ -27,6 +36,16 @@ func ExampleHumanSize() {
 	fmt.Println(HumanSize(float64(3.42 * GB)))
 	fmt.Println(HumanSize(float64(5.372 * TB)))
 	fmt.Println(HumanSize(float64(2.22 * PB)))
+
+	// Output:
+	// 1kB
+	// 1.024kB
+	// 1MB
+	// 1.049MB
+	// 2MB
+	// 3.42GB
+	// 5.372TB
+	// 2.22PB
 }
 
 func ExampleFromHumanSize() {
@@ -41,6 +60,19 @@ func ExampleFromHumanSize() {
 	fmt.Println(FromHumanSize("32Gb"))
 	fmt.Println(FromHumanSize("32Tb"))
 	fmt.Println(FromHumanSize("32Pb"))
+
+	// Output:
+	// 32 <nil>
+	// 32 <nil>
+	// 32 <nil>
+	// 32000 <nil>
+	// 32000 <nil>
+	// 32000 <nil>
+	// 32000 <nil>
+	// 32000000 <nil>
+	// 32000000000 <nil>
+	// 32000000000000 <nil>
+	// 32000000000000000 <nil>
 }
 
 func ExampleRAMInBytes() {
@@ -57,6 +89,21 @@ func ExampleRAMInBytes() {
 	fmt.Println(RAMInBytes("32Pb"))
 	fmt.Println(RAMInBytes("32PB"))
 	fmt.Println(RAMInBytes("32P"))
+
+	// Output:
+	// 32 <nil>
+	// 32 <nil>
+	// 32 <nil>
+	// 32768 <nil>
+	// 32768 <nil>
+	// 32768 <nil>
+	// 32768 <nil>
+	// 33554432 <nil>
+	// 34359738368 <nil>
+	// 35184372088832 <nil>
+	// 36028797018963968 <nil>
+	// 36028797018963968 <nil>
+	// 36028797018963968 <nil>
 }
 
 func TestBytesSize(t *testing.T) {
