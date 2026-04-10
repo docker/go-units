@@ -38,6 +38,39 @@ func ExampleHumanDuration() {
 	fmt.Println(HumanDuration(24 * 30 * 24 * time.Hour))
 	fmt.Println(HumanDuration(24*30*24*time.Hour + 2*7*24*time.Hour))
 	fmt.Println(HumanDuration(3*365*24*time.Hour + 2*30*24*time.Hour))
+
+	// Output:
+	// Less than a second
+	// 47 seconds
+	// About a minute
+	// 3 minutes
+	// 35 minutes
+	// 35 minutes
+	// About an hour
+	// 2 hours
+	// 3 hours
+	// 4 hours
+	// 4 hours
+	// 24 hours
+	// 36 hours
+	// 2 days
+	// 7 days
+	// 13 days
+	// 2 weeks
+	// 2 weeks
+	// 3 weeks
+	// 4 weeks
+	// 4 weeks
+	// 4 weeks
+	// 6 weeks
+	// 2 months
+	// 3 months
+	// 5 months
+	// 13 months
+	// 23 months
+	// 24 months
+	// 2 years
+	// 3 years
 }
 
 func TestHumanDuration(t *testing.T) {

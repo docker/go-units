@@ -12,6 +12,12 @@ func ExampleParseUlimit() {
 	fmt.Println(ParseUlimit("nofile=1024"))
 	fmt.Println(ParseUlimit("cpu=2:4"))
 	fmt.Println(ParseUlimit("cpu=6"))
+
+	// Output:
+	// nofile=512:1024 <nil>
+	// nofile=1024:1024 <nil>
+	// cpu=2:4 <nil>
+	// cpu=6:6 <nil>
 }
 
 func TestParseUlimitValid(t *testing.T) {
