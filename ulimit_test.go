@@ -51,6 +51,12 @@ func TestParseUlimitBadFormat(t *testing.T) {
 	if _, err := ParseUlimit("nofile=:1024"); err == nil {
 		t.Fatal("expected error on bad syntax")
 	}
+	if _, err := ParseUlimit("nofile=1024=512"); err == nil {
+		t.Fatal("expected error on bad syntax")
+	}
+	if _, err := ParseUlimit("nofile=1024:512=extra"); err == nil {
+		t.Fatal("expected error on bad syntax")
+	}
 }
 
 func TestParseUlimitHardLessThanSoft(t *testing.T) {
