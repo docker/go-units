@@ -256,7 +256,7 @@ func BenchmarkParseSize(b *testing.B) {
 	}
 }
 
-func assertEquals(t *testing.T, expected, actual interface{}) {
+func assertEquals(t *testing.T, expected, actual any) {
 	t.Helper()
 	if expected != actual {
 		t.Errorf("Expected '%v' but got '%v'", expected, actual)

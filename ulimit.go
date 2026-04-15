@@ -64,13 +64,13 @@ var ulimitNameMapping = map[string]int{
 
 // ParseUlimit parses and returns a Ulimit from the specified string.
 func ParseUlimit(val string) (*Ulimit, error) {
-	parts := strings.SplitN(val, "=", 2)
-	if len(parts) != 2 {
+	name, val, ok := strings.Cut(val, "=")
+	if !ok {
 		return nil, fmt.Errorf("invalid ulimit argument: %s", val)
 	}
 
-	if _, exists := ulimitNameMapping[parts[0]]; !exists {
-		return nil, fmt.Errorf("invalid ulimit type: %s", parts[0])
+	if _, exists := ulimitNameMapping[name]; !exists {
+		return nil, fmt.Errorf("invalid ulimit type: %s", name)
 	}
 
 	var (
@@ -79,21 +79,19 @@ func ParseUlimit(val string) (*Ulimit, error) {
 		temp int64
 		err  error
 	)
-	switch limitVals := strings.Split(parts[1], ":"); len(limitVals) {
-	case 2:
-		temp, err = strconv.ParseInt(limitVals[1], 10, 64)
+	switch softStr, hardStr, ok := strings.Cut(val, ":"); ok {
+	case true:
+		temp, err = strconv.ParseInt(hardStr, 10, 64)
 		if err != nil {
 			return nil, err
 		}
 		hard = &temp
 		fallthrough
-	case 1:
-		soft, err = strconv.ParseInt(limitVals[0], 10, 64)
+	case false:
+		soft, err = strconv.ParseInt(softStr, 10, 64)
 		if err != nil {
 			return nil, err
 		}
-	default:
-		return nil, fmt.Errorf("too many limit value arguments - %s, can only have up to two, `soft[:hard]`", parts[1])
 	}
 
 	if *hard != -1 {
@@ -105,7 +103,7 @@ func ParseUlimit(val string) (*Ulimit, error) {
 		}
 	}
 
-	return &Ulimit{Name: parts[0], Soft: soft, Hard: *hard}, nil
+	return &Ulimit{Name: name, Soft: soft, Hard: *hard}, nil
 }
 
 // GetRlimit returns the RLimit corresponding to Ulimit.

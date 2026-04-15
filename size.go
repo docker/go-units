@@ -89,20 +89,15 @@ func RAMInBytes(size string) (int64, error) {
 
 // Parses the human-readable size string into the amount it represents.
 func parseSize(sizeStr string, uMap unitMap) (int64, error) {
-	// TODO: rewrite to use strings.Cut if there's a space
-	// once Go < 1.18 is deprecated.
-	sep := strings.LastIndexAny(sizeStr, "01234567890. ")
-	if sep == -1 {
-		// There should be at least a digit.
-		return -1, fmt.Errorf("invalid size: '%s'", sizeStr)
-	}
-	var num, sfx string
-	if sizeStr[sep] != ' ' {
+	num, sfx, ok := strings.Cut(sizeStr, " ")
+	if !ok {
+		// No space between number and suffix. Find the suffix.
+		sep := strings.LastIndexAny(sizeStr, "01234567890.")
+		if sep == -1 {
+			// There should be at least a digit.
+			return -1, fmt.Errorf("invalid size: '%s'", sizeStr)
+		}
 		num = sizeStr[:sep+1]
-		sfx = sizeStr[sep+1:]
-	} else {
-		// Omit the space separator.
-		num = sizeStr[:sep]
 		sfx = sizeStr[sep+1:]
 	}
 
