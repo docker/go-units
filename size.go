@@ -2,6 +2,7 @@ package units
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -37,28 +38,37 @@ var (
 	binaryAbbrs  = []string{"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"}
 )
 
-func getSizeAndUnit(size float64, base float64, _map []string) (float64, string) {
+func getSizeAndUnitIndex(size float64, base float64, unitsCount int) (float64, int) {
 	i := 0
-	unitsLimit := len(_map) - 1
-	for size >= base && i < unitsLimit {
+	for size >= base && i < unitsCount-1 {
 		size = size / base
 		i++
 	}
-	return size, _map[i]
+	return size, i
 }
 
 // CustomSize returns a human-readable approximation of a size
 // using custom format.
 func CustomSize(format string, size float64, base float64, _map []string) string {
-	size, unit := getSizeAndUnit(size, base, _map)
-	return fmt.Sprintf(format, size, unit)
+	size, unitIndex := getSizeAndUnitIndex(size, base, len(_map))
+	return fmt.Sprintf(format, size, _map[unitIndex])
 }
 
 // HumanSizeWithPrecision allows the size to be in any precision,
 // instead of 4 digit precision used in units.HumanSize.
 func HumanSizeWithPrecision(size float64, precision int) string {
-	size, unit := getSizeAndUnit(size, 1000.0, decimapAbbrs)
-	return fmt.Sprintf("%.*g%s", precision, size, unit)
+	const base = 1000
+
+	unitsCount := len(decimapAbbrs)
+
+	size, unitIndex := getSizeAndUnitIndex(size, base, unitsCount)
+
+	if unitIndex < unitsCount-1 && math.Pow(10, float64(precision))-.5 <= size {
+		size = size / base
+		unitIndex++
+	}
+
+	return fmt.Sprintf("%.*g%s", precision, size, decimapAbbrs[unitIndex])
 }
 
 // HumanSize returns a human-readable approximation of a size
