@@ -57,7 +57,7 @@ func ExampleHumanDuration() {
 	// 7 days
 	// 13 days
 	// 2 weeks
-	// 2 weeks
+	// 3 weeks
 	// 3 weeks
 	// 4 weeks
 	// 4 weeks
@@ -108,21 +108,28 @@ func TestHumanDuration(t *testing.T) {
 	assertEquals(t, "2 days", HumanDuration(2*day))
 	assertEquals(t, "7 days", HumanDuration(7*day))
 	assertEquals(t, "13 days", HumanDuration(13*day+5*time.Hour))
+	assertEquals(t, "3 days", HumanDuration(2*day+17*time.Hour))
+	assertEquals(t, "14 days", HumanDuration(13*day+12*time.Hour))
 	assertEquals(t, "2 weeks", HumanDuration(2*week))
-	assertEquals(t, "2 weeks", HumanDuration(2*week+4*day))
+	assertEquals(t, "3 weeks", HumanDuration(2*week+4*day))
 	assertEquals(t, "3 weeks", HumanDuration(3*week))
+	assertEquals(t, "4 weeks", HumanDuration(3*week+6*day))
 	assertEquals(t, "4 weeks", HumanDuration(4*week))
 	assertEquals(t, "4 weeks", HumanDuration(4*week+3*day))
 	assertEquals(t, "4 weeks", HumanDuration(1*month))
+	assertEquals(t, "8 weeks", HumanDuration(8*week+3*day))
 	assertEquals(t, "6 weeks", HumanDuration(1*month+2*week))
 	assertEquals(t, "2 months", HumanDuration(2*month))
 	assertEquals(t, "2 months", HumanDuration(2*month+2*week))
 	assertEquals(t, "3 months", HumanDuration(3*month))
 	assertEquals(t, "3 months", HumanDuration(3*month+1*week))
+	assertEquals(t, "4 months", HumanDuration(3*month+20*day))
 	assertEquals(t, "5 months", HumanDuration(5*month+2*week))
 	assertEquals(t, "13 months", HumanDuration(13*month))
 	assertEquals(t, "23 months", HumanDuration(23*month))
 	assertEquals(t, "24 months", HumanDuration(24*month))
 	assertEquals(t, "2 years", HumanDuration(24*month+2*week))
 	assertEquals(t, "3 years", HumanDuration(3*year+2*month))
+	assertEquals(t, "4 years", HumanDuration(3*year+8*month))
+	assertEquals(t, "4 years", HumanDuration(3*year+200*day))
 }
