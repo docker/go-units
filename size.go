@@ -2,6 +2,7 @@ package units
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -111,7 +112,7 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 	}
 
 	if len(sfx) == 0 {
-		return int64(size), nil
+		return checkedSize(size, sizeStr)
 	}
 
 	// Process the suffix.
@@ -125,7 +126,7 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 		if len(sfx) > 1 { // no extra characters allowed after b.
 			goto badSuffix
 		}
-		return int64(size), nil
+		return checkedSize(size, sizeStr)
 	}
 	// A suffix from the map.
 	if mul, ok := uMap[sfx[0]]; ok {
@@ -142,8 +143,18 @@ func parseSize(sizeStr string, uMap unitMap) (int64, error) {
 		goto badSuffix
 	}
 
-	return int64(size), nil
+	return checkedSize(size, sizeStr)
 
 badSuffix:
 	return -1, fmt.Errorf("invalid suffix: '%s'", sfx)
+}
+
+// checkedSize converts a parsed byte count to int64.
+// float64(math.MaxInt64) is 2^63. A value at or above that does not fit,
+// and the conversion would saturate to math.MaxInt64.
+func checkedSize(size float64, sizeStr string) (int64, error) {
+	if size >= float64(math.MaxInt64) {
+		return -1, fmt.Errorf("invalid size: '%s'", sizeStr)
+	}
+	return int64(size), nil
 }
